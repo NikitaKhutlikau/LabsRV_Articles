@@ -1,0 +1,6 @@
+@LabsRV_Discussion_HostAddress = http://localhost:5016
+
+GET {{LabsRV_Discussion_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

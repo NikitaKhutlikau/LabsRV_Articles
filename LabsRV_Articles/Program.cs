@@ -16,6 +16,12 @@ namespace LabsRV_Articles
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddHttpClient<ICommentService, RemoteCommentService>()
+                    .ConfigureHttpClient(client =>
+                    {
+                        client.BaseAddress = new Uri("http://localhost:24130/api/v1.0/comments/");
+                    });
+
             // Настройка подключения к PostgreSQL через строку из appsettings.json
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));

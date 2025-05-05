@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace LabsRV_Articles.Models.DTO
+namespace LabsRV_Discussion.Models.DTO
 {
     public class CommentRequestDto
     {
@@ -15,3 +15,4 @@ namespace LabsRV_Articles.Models.DTO
         public string Content { get; set; } = string.Empty;
     }
 }
+
