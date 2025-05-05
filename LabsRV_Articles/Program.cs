@@ -1,8 +1,11 @@
+using LabsRV_Articles.Data;
 using LabsRV_Articles.Mapping;
 using LabsRV_Articles.Models.Domain;
+using LabsRV_Articles.Models.Exceptions;
 using LabsRV_Articles.Repositories;
 using LabsRV_Articles.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
 namespace LabsRV_Articles
@@ -13,36 +16,40 @@ namespace LabsRV_Articles
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // Настройка подключения к PostgreSQL через строку из appsettings.json
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
             // Add services to the container.
 
             // Регистрируем контроллеры
             builder.Services.AddControllers();
-                /*.ConfigureApiBehaviorOptions(options =>
+            /*.ConfigureApiBehaviorOptions(options =>
+            {
+                // Попробуем изменить стандартный обработчик ошибок модели, чтобы он возвращал JSON
+                options.InvalidModelStateResponseFactory = context =>
                 {
-                    // Попробуем изменить стандартный обработчик ошибок модели, чтобы он возвращал JSON
-                    options.InvalidModelStateResponseFactory = context =>
+                    var result = new ObjectResult(context.ModelState)
                     {
-                        var result = new ObjectResult(context.ModelState)
-                        {
-                            StatusCode = StatusCodes.Status405MethodNotAllowed,
-                            ContentTypes = { "application/json" }
-                        };
-
-
-                        var result = new BadRequestObjectResult(context.ModelState);
-                        result.ContentTypes.Add("application/json");
-                        return result;
+                        StatusCode = StatusCodes.Status405MethodNotAllowed,
+                        ContentTypes = { "application/json" }
                     };
-                });*/
+
+
+                    var result = new BadRequestObjectResult(context.ModelState);
+                    result.ContentTypes.Add("application/json");
+                    return result;
+                };
+            });*/
 
             // Регистрируем AutoMapper с нашим профилем
             builder.Services.AddAutoMapper(typeof(MappingProfile));
 
             // Регистрируем InMemory-репозитории для каждой сущности
-            builder.Services.AddSingleton<IRepository<Author>, InMemoryRepository<Author>>();
-            builder.Services.AddSingleton<IRepository<Article>, InMemoryRepository<Article>>();
-            builder.Services.AddSingleton<IRepository<Sticker>, InMemoryRepository<Sticker>>();
-            builder.Services.AddSingleton<IRepository<Comment>, InMemoryRepository<Comment>>();
+            builder.Services.AddScoped<AuthorRepository, AuthorRepository>();
+            builder.Services.AddScoped<ArticleRepository, ArticleRepository>();
+            builder.Services.AddScoped<StickerRepository, StickerRepository>();
+            builder.Services.AddScoped<IRepository<Comment>, Repository<Comment>>();
 
             // Регистрируем сервисы
             builder.Services.AddScoped<AuthorService>();
@@ -92,8 +99,10 @@ namespace LabsRV_Articles
                             context.Response.StatusCode = 400; // Bad Request
                         else if (ex is KeyNotFoundException)
                             context.Response.StatusCode = 404; // Not Found
+                        else if (ex is AlreadyExistsException)
+                            context.Response.StatusCode = 403;
                         else
-                            context.Response.StatusCode = 500; // Internal Server Error
+                            context.Response.StatusCode = 400; // Bad Request
 
                         context.Response.ContentType = "application/json";
                         var errResponse = new

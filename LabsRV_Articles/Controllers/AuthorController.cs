@@ -16,10 +16,10 @@ namespace LabsRV_Articles.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] AuthorRequestDto request)
+        public async Task<IActionResult> Create([FromBody] AuthorRequestDto request)
         {
-            var response = _authorService.Create(request);
-            return CreatedAtAction(nameof(GetById), new { id = response.id }, response);
+            var response = await _authorService.CreateAsync(request);
+            return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
         }
 
         [HttpGet]
@@ -39,12 +39,6 @@ namespace LabsRV_Articles.Controllers
         [HttpPut("{id}")]
         public IActionResult Update(int id, [FromBody] AuthorRequestDto request)
         {
-            if (request == null)
-                return BadRequest(new { errorMessage = "Request body is missing or invalid." });
-
-            if (id <= 0)
-                return BadRequest(new { errorMessage = "Invalid ID provided." });
-
             var response = _authorService.Update(id, request);
             return Ok(response);
         }

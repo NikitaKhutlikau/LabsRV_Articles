@@ -1,25 +1,41 @@
 ﻿using LabsRV_Articles.Models.Domain;
+using LabsRV_Articles.MyApp.Models.Domain;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LabsRV_Articles.Models.Domain
 {
+    [Index(nameof(id), IsUnique = true)]
+    [Index(nameof(title), IsUnique = true)]
     public class Article : IEntity
     {
-        public int Id { get; set; }
-        public int AuthorId { get; set; }  // Внешний ключ для Author
-        public string Title { get; set; }
-        public string Content { get; set; }
-        public DateTime Created { get; set; }
-        public DateTime Modified { get; set; }
+        public int id { get; set; }
 
-        // Навигационное свойство – автор статьи (необязательно для in‑memory, но отражает связь)
-        public Author Author { get; set; }
+        [Required]
+        [Column ("author_id")]
+        public int authorId { get; set; }
+        public Author author { get; set; }
 
-        // Связь «Article – Comment»: статья может иметь множество комментариев.
-        public List<Comment> Comments { get; set; } = new List<Comment>();
+        [Required]
+        [StringLength(64, MinimumLength = 2)]
+        public string title { get; set; }
 
-        // Связь «Article – Sticker (many-to-many)».
-        // Для упрощения здесь просто список навигационных свойств.
-        public List<Sticker> Stickers { get; set; } = new List<Sticker>();
+        [Required]
+        [StringLength(2048, MinimumLength = 4)]
+        public string content { get; set; }
+
+        [Required]
+        public DateTime created { get; set; }
+
+        [Required]
+        public DateTime modified { get; set; }
+
+        // Одна статья – много комментариев
+        public ICollection<Comment> comments { get; set; } = new List<Comment>();
+
+        // Многие-ко-многим через вспомогательную сущность
+        public ICollection<ArticleSticker> articleStickers { get; set; } = new List<ArticleSticker>();
     }
 }

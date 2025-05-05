@@ -7,15 +7,18 @@ namespace LabsRV_Articles.Services
 {
     public class StickerService : Service<Sticker, StickerRequestDto, StickerResponseDto>
     {
-        public StickerService(IRepository<Sticker> repository, IMapper mapper)
+        protected new readonly StickerRepository _repository;
+
+        public StickerService(StickerRepository repository, IMapper mapper)
             : base(repository, mapper)
         {
+            _repository = repository;
         }
 
         public override void Validate(StickerRequestDto request)
         {
-            if (string.IsNullOrWhiteSpace(request.name))
-                throw new System.ArgumentException("Name is required for a sticker.");
+            if (string.IsNullOrWhiteSpace(request.Name) || request.Name.Length < 2 || request.Name.Length > 32)
+                throw new ArgumentException("Sticker Name must be between 2 and 32 characters.");
         }
     }
 }

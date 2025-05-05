@@ -16,17 +16,17 @@ namespace LabsRV_Articles.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] ArticleRequestDto request)
+        public async Task<IActionResult> Create([FromBody] ArticleRequestDto request)
         {
-            var response = _articleService.Create(request);
-            return CreatedAtAction(nameof(GetById), new { id = response.id }, response);
+            var response = await _articleService.CreateAsync(request);
+            return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
         }
 
         [HttpGet]
         public IActionResult GetAll()
         {
-            var response = _articleService.GetAll();
-            return Ok(response);
+            var responses = _articleService.GetAll();
+            return Ok(responses);
         }
 
         [HttpGet("{id}")]
@@ -44,9 +44,9 @@ namespace LabsRV_Articles.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            _articleService.Delete(id);
+            await _articleService.DeleteAsync(id);
             return NoContent();
         }
     }

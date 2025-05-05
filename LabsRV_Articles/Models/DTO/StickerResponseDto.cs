@@ -1,8 +1,13 @@
-﻿namespace LabsRV_Articles.Models.DTO
+﻿using System.Text.Json.Serialization;
+
+namespace LabsRV_Articles.Models.DTO
 {
     public class StickerResponseDto
     {
-        public int id { get; set; }
-        public string name { get; set; }
+        [JsonPropertyName("id")]
+        public int Id { get; set; }
+
+        [JsonPropertyName("name")]
+        public string Name { get; set; } = string.Empty;
     }
 }

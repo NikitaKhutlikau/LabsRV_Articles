@@ -1,11 +1,20 @@
-﻿namespace LabsRV_Articles.Models.Domain
+﻿using LabsRV_Articles.MyApp.Models.Domain;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+
+namespace LabsRV_Articles.Models.Domain
 {
+    [Index(nameof(id), IsUnique = true)]
+    [Index(nameof(name), IsUnique = true)]
     public class Sticker : IEntity
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        public int id { get; set; }
 
-        // Для связи many-to-many: один стикер может быть связан с несколькими статьями.
-        public List<Article> Articles { get; set; } = new List<Article>();
+        [Required]
+        [StringLength(32, MinimumLength = 2)]
+        public string name { get; set; }
+
+        // Многие-ко-многим
+        public ICollection<ArticleSticker> articleStickers { get; set; } = new List<ArticleSticker>();
     }
 }

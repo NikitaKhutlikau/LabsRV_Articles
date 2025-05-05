@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using LabsRV_Articles.Models.Domain;
 using LabsRV_Articles.Models.DTO;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LabsRV_Articles.Mapping
 {
@@ -11,8 +10,12 @@ namespace LabsRV_Articles.Mapping
         {
             // Маппинг для авторов с обязательным заполнением списка ArticleIds
             CreateMap<Author, AuthorResponseDto>()
-                .ForMember(dest => dest.ArticleIds, opt => opt.MapFrom(src => src.Articles.Select(a => a.Id).ToList()));
+                .ForMember(dest => dest.ArticleIds, opt => opt.MapFrom(src => src.articles.Select(a => a.id).ToList()));
             CreateMap<AuthorRequestDto, Author>();
+
+            CreateMap<Article, ArticleResponseDto>()
+                .ForMember(dest => dest.StickerNames,
+                            opt => opt.MapFrom(src => src.articleStickers.Select(as_ => as_.sticker.name)));
 
             // Маппинг для статей
             CreateMap<Article, ArticleResponseDto>();

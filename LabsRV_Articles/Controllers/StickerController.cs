@@ -19,7 +19,7 @@ namespace LabsRV_Articles.Controllers
         public IActionResult Create([FromBody] StickerRequestDto request)
         {
             var response = _stickerService.Create(request);
-            return CreatedAtAction(nameof(GetById), new { id = response.id }, response);
+            return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
         }
 
         [HttpGet]

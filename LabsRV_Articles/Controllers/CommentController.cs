@@ -19,7 +19,7 @@ namespace LabsRV_Articles.Controllers
         public IActionResult Create([FromBody] CommentRequestDto request)
         {
             var response = _commentService.Create(request);
-            return CreatedAtAction(nameof(GetById), new { id = response.id }, response);
+            return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
         }
 
         [HttpGet]
